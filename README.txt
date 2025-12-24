@@ -61,7 +61,7 @@ pip install -r requirements.txt
    - 题目、类标（教育/健康/生活/娱乐/游戏）
    - 关键词|高频词（各取前5个）
    - 实体（人名/地名/机构名）
-   - 摘要（前200字精简）
+   - 摘要（基于题目问题精准抽取的回答浓缩）
 4. **人工修改**：可在右侧文本框中手动修正分析内容。
 5. **保存修改**：点击"保存修改"按钮，结果将以 `D_Mark="M"` 标志追加保存。
 6. **批量分析**：点击底部"开始分析"按钮，一键处理目录下所有 252 个文件。
@@ -82,18 +82,19 @@ pip install -r requirements.txt
 
 
 ## 打包命令
-# 彻底清理
+# 1. 清理旧构建
 Remove-Item -Recurse -Force build, dist, DocumentAnalyzer.spec -ErrorAction SilentlyContinue
 
-#使用隐藏导入命令
+# 2. 打包
 pyinstaller -F -w --name DocumentAnalyzer `
---hidden-import "sklearn.pipeline" `
---hidden-import "sklearn.preprocessing._label" `
---hidden-import "sklearn.utils._cython_blas" `
---hidden-import "sklearn.utils._typedefs" `
---hidden-import "sklearn.neighbors._partition_nodes" `
---hidden-import "sklearn.neighbors._quad_tree" `
---hidden-import "sklearn.tree._utils" `
---hidden-import "sklearn.feature_extraction.text" `
---hidden-import "sklearn.naive_bayes" `
+--hidden-import sklearn.pipeline `
+--hidden-import sklearn.feature_extraction.text `
+--hidden-import sklearn.linear_model `
+--hidden-import sklearn.linear_model._logistic `
+--hidden-import sklearn.utils._cython_blas `
+--hidden-import sklearn.utils._typedefs `
+--hidden-import sklearn.metrics._classification `
+--add-data "model;model" `
+--add-data "stopwords.txt;." `
+--add-data "health_corpus.txt;." `
 main.py
