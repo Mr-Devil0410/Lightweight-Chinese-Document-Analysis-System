@@ -116,22 +116,79 @@ class DocumentAnalyzerApp:
             for f in self.file_list:
                 self.file_listbox.insert(tk.END, f)
 
+            result_dir = os.path.join(path, "result")
+            result_file = os.path.join(result_dir, "result_log.jsonl")
+            if os.path.exists(result_file):
+                os.remove(result_file)
+
     def on_file_select(self, event):
         selection = self.file_listbox.curselection()
         if not selection:
             return
         self.current_file_idx = selection[0]
         filename = self.file_list[self.current_file_idx]
+
         try:
+
             with open(os.path.join(self.current_dir, filename), "r", encoding="utf-8") as f:
                 json_line = f.readline().strip()
                 data = json.loads(json_line)
                 title = data.get("title") or data.get("Title") or ""
                 document = data.get("content") or data.get("Content") or data.get("Document") or ""
-                if document:
-                    res = analyze_content(title, document)
-                    if res:
-                        self.fill_fields(res, document)
+
+            if not document:
+                return
+
+
+            result_file_path = os.path.join(self.current_dir, "result", "result_log.jsonl")
+            modified_data = None
+            latest_timestamp = 0
+
+            if os.path.exists(result_file_path):
+                with open(result_file_path, "r", encoding="utf-8") as f:
+                    for line in f:
+                        line = line.strip()
+                        if not line:
+                            continue
+
+                        try:
+                            result_data = json.loads(line)
+                            # 检查是否是当前文件且是人工修改记录
+                            if (result_data.get("FileName", [""])[0] == filename and
+                                    result_data.get("D_Mark", [""])[0] == "M"):
+
+                                # 提取时间戳
+                                ts_str = result_data.get("TimeStamp", ["0"])[0]
+                                try:
+                                    timestamp = float(ts_str)
+                                except:
+                                    timestamp = 0
+
+                                # 保存最新的修改记录
+                                if timestamp > latest_timestamp:
+                                    latest_timestamp = timestamp
+                                    modified_data = result_data
+                        except:
+                            continue
+
+
+            if modified_data:
+
+                result_for_display = {
+                    "Title": modified_data.get("Title", [""])[0],
+                    "ClassLabel": modified_data.get("ClassLabel", [""])[0],
+                    "KeyWord_HFWord": modified_data.get("KeyWord_HFWord", [""])[0],
+                    "NamedEntity": modified_data.get("NamedEntity", [""])[0],
+                    "Abstract": modified_data.get("Abstract", [""])[0],
+                    "Document": modified_data.get("Document", [document])[0]
+                }
+                self.fill_fields(result_for_display, result_for_display["Document"])
+            else:
+
+                res = analyze_content(title, document)
+                if res:
+                    self.fill_fields(res, document)
+
         except Exception as e:
             messagebox.showerror("错误", f"读取文件失败：{str(e)}")
 
