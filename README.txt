@@ -8,6 +8,8 @@
 
 ---
 
+
+
 ## 运行环境
 
 - **Python 版本**：Python 3.12 或更高版本  
@@ -32,6 +34,20 @@ pip install -r requirements.txt
 - `health_corpus.txt` - 健康类补充语料
 - `model/text_classifier_5cat.pkl` - **预训练分类模型（核心文件）**
 
+
+### 4. 数据集准备（仅当需要重新训练模型时）
+
+如果您拥有THUCNews完整数据集并希望重新训练模型，请按以下步骤准备：
+
+1. **下载数据集**：
+   - 访问：http://thuctc.thunlp.org/
+   - 下载THUCNews新闻分类数据集
+
+2. **放置数据集**：
+   - 解压下载的文件
+   - 将整个`THUCNews`文件夹放置在**项目根目录**下
+
+
 > **注意**：
 > 只有当你拥有 `THUCNews` 完整数据集目录并希望自行改进模型时，才需要运行 `python train_classifier.py`。
 > **若本地没有该数据集，请勿运行训练脚本，直接使用自带的预训练模型即可。**
@@ -40,17 +56,33 @@ pip install -r requirements.txt
 
 ## 项目文件结构
 项目根目录/
-├── main.py              # 主程序入口（图形界面）
-├── nlp_core.py          # NLP核心分析模块（分词、提取、分类调用）
-├── train_classifier.py  # 分类器训练脚本（需 THUCNews 数据集）
-├── requirements.txt     # 依赖包列表
-├── stopwords.txt        # 停用词表
-├── health_corpus.txt    # 健康类语料（用于弥补通用数据集不足）
-├── DocumentAnalyzer.spec # PyInstaller 打包配置文件
+│
+├── main.py                     # 主程序入口（GUI）
+├── nlp_core.py                 # NLP 核心模块（分词、抽取、分类）
+├── train_classifier.py         # 分类器训练脚本（可选）
+├── requirements.txt            # Python 依赖列表
+│
+├── stopwords.txt               # 中文停用词表
+├── health_corpus.txt           # 健康领域补充语料
+│
+├── DocumentAnalyzer.spec       # PyInstaller 打包配置
+│
 ├── model/
-│   └── text_classifier_5cat.pkl  # 训练好的轻量化模型文件
-└── examples/            # 待分析的示例数据目录
-    └── result/          # 分析结果存放目录（自动生成）
+│   └── text_classifier_5cat.pkl   # 预训练五分类模型
+│
+├── examples/                   # 示例数据目录
+│   ├── *.jsonl                 # 待分析文件
+│   └── result/                 # 分析结果输出目录（自动生成）
+│       └── result_log.jsonl
+│
+└── THUCNews/                   # 训练数据集目录
+    ├── 教育/
+    ├── 健康/
+    ├── 生活/
+    ├── 娱乐/
+    └── 游戏/
+    .....
+
 
 ---
 
