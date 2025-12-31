@@ -14,8 +14,6 @@
 
 - **Python 版本**：Python 3.12 或更高版本  
 - **操作系统**：Windows 10/11, macOS, Linux  
-- **内存**：至少 2GB RAM  
-- **存储**：100MB 可用空间  
 
 ---
 
@@ -77,7 +75,6 @@ pip install -r requirements.txt
 │
 └── THUCNews/                   # 训练数据集目录
     ├── 教育/
-    ├── 健康/
     ├── 生活/
     ├── 娱乐/
     └── 游戏/
