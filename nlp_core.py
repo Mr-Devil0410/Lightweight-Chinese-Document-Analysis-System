@@ -123,7 +123,7 @@ def analyze_content(title, document):
             hf_words.append(w)
         if len(hf_words) >= 5: break
 
-    key_hf = f"{','.join(keywords)}|{','.join(hf_words)}"
+    key_hf = f"{','.join(keywords)},|{','.join(hf_words)}"
     entity_str = ",".join(extract_entities(document, stopwords)) or "无"
 
     abstract = get_best_abstract(title, document, 200)
